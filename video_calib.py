@@ -18,6 +18,10 @@ cv2.imwrite('charuco.png', img)
 
 # turn on camera
 cap = cv2.VideoCapture(0)
+if not cap.isOpened():
+    print('open camera failed')
+else:
+    print('open camera succeeded')
 
 # record corners and Ids
 allCorners = []
@@ -25,7 +29,7 @@ allIds = []
 decimator = 0
 
 #
-for i in range(1000):
+while True:
 
     ret, frame = cap.read()
     gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
@@ -40,7 +44,8 @@ for i in range(1000):
         cv2.aruco.drawDetectedMarkers(gray, res[0], res[1])
 
     cv2.imshow('frame', gray)
-    if cv2.waitKey(1) & 0xFF == ord('q'):
+    if cv2.waitKey(1) & 0xFF == 27:
+        print('camera closed')
         break
     decimator += 1
 
