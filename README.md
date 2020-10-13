@@ -5,10 +5,10 @@ top camera (at least).
 
 ### an example chessboard would be like:
 
-![Image text](https://github.com/caraido/charuco/raw/master/mutlimedia/charuco.png)
+![Image text](multimedia/charuco.png)
 
 ### an example of video tracking the corners would be like:
 
-![Image text](https://github.com/caraido/charuco/raw/master/mutlimedia/demo-marker.gif)
+![Image text](multimedia/demo-marker.gif)
 
 
