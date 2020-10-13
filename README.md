@@ -11,4 +11,17 @@ top camera (at least).
 
 ![Image text](multimedia/demo-marker.gif)
 
+### Calibration testing picture
+1.  find out corners from the video/pictures/real-time recording
+2.  calculate camera matrix
+3.  calculate distortion coefficients
+4.  undistort the testing picture
+
+![Image text](multimedia/test.jpeg)
+
+### result (failed, need more investigation)
+
+![Image text](multimedia/calibresult.png)
+
+
 
