@@ -1,3 +1,6 @@
+#!/usr/bin/env python3.8
+# -*- coding: utf-8 -*-
+
 import numpy as np
 import cv2, PIL
 from cv2 import aruco
@@ -43,10 +46,11 @@ while True:
         #
         res2 = cv2.aruco.interpolateCornersCharuco(res[0], res[1], gray, board)
         if res2[1] is not None and res2[2] is not None and len(res2[1]) > 3 and decimator % 3 == 0:
-            allCorners.append(res2[1])
-            allIds.append(res2[2])
-
-        cv2.aruco.drawDetectedMarkers(gray, res[0], res[1])
+            allCorners.append(res[0])
+            allIds.append(res[1])
+        #allCorners.append(res[0])
+        #allIds.append(res[1])
+        cv2.aruco.drawDetectedMarkers(gray, res[0], res[1], borderColor=225)
 
     cv2.imshow('frame', gray)
     if cv2.waitKey(1) & 0xFF == 27:
@@ -64,25 +68,28 @@ try:
     cal = cv2.aruco.calibrateCameraCharuco(allCorners, allIds, board, imsize, None, None)
     print("calibration succeeded!")
 except:
+    cal = 0
     print("calibration failed!")
     cap.release()
 
 
 # new camera matrix
-mtx = cal[1]
-dist_coef = cal[2]
-rvec = cal[3]
-trec = cal[4]
-img = cv2.imread('./multimedia/test.jpeg')
-w,  h = img.shape[:2]
-newcameramtx, roi=cv2.getOptimalNewCameraMatrix(mtx,dist_coef,(w,h),0,(w,h))
+if cal:
+    mtx = cal[1]
+    dist_coef = cal[2]
+    rvec = cal[3]
+    trec = cal[4]
+    img = cv2.imread('./multimedia/test.jpeg')
+    newcameramtx, roi=cv2.getOptimalNewCameraMatrix(mtx,dist_coef,imsize,0,imsize)
 
-# undistort
-#dst = cv2.undistort(img, mtx, dist_coef, None, newcameramtx)
-mapx,mapy = cv2.initUndistortRectifyMap(mtx,dist_coef,None,newcameramtx,(w,h),5)
-dst = cv2.remap(img,mapx,mapy,cv2.INTER_LINEAR)
+    # undistort
+    dst = cv2.undistort(img, mtx, dist_coef, None, newcameramtx)
+    #mapx,mapy = cv2.initUndistortRectifyMap(mtx,dist_coef,None,newcameramtx,(w,h),5)
+    #dst = cv2.remap(img,mapx,mapy,cv2.INTER_LINEAR)
 
-# crop the image
-x,y,w,h = roi
-#dst = dst[y:y+h, x:x+w]
-cv2.imwrite('calibresult.png',dst)
+    # crop the image
+    x,y,w,h = roi
+    #dst = dst[y:y+h, x:x+w]
+    cv2.imwrite('./multimedia/calibresult.png',dst)
+else:
+    pass
