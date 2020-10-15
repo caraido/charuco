@@ -176,12 +176,14 @@ def calibrate_charuco(allCorners, allIds, board, video_params):
     tstart = time()
 
     cameraMat = np.eye(3)
-    distCoeffs = np.zeros(8)
+    distCoeffs = np.zeros(14)
     dim = (video_params['width'], video_params['height'])
     calib_flags = cv2.CALIB_ZERO_TANGENT_DIST + cv2.CALIB_FIX_K3 + \
                   cv2.CALIB_FIX_PRINCIPAL_POINT
     calib_flags2 = cv2.fisheye.CALIB_RECOMPUTE_EXTRINSIC + cv2.fisheye.CALIB_CHECK_COND +cv2.fisheye.CALIB_FIX_SKEW
-    calib_flags3 = cv2.CALIB_RATIONAL_MODEL
+    # all model included with 14 coeffifcent. about the flag please check:
+    # https://docs.opencv.org/3.4/d9/d0c/group__calib3d.html
+    calib_flags3 = cv2.CALIB_RATIONAL_MODEL + cv2.CALIB_THIN_PRISM_MODEL + cv2.CALIB_TILTED_MODEL
 
     error, cameraMat, distCoeffs, rvecs, tvecs = cv2.aruco.calibrateCameraCharuco(
         allCorners, allIds, board,
@@ -249,4 +251,4 @@ if __name__ == '__main__':
     #img = board.draw((200 * 3, 200 * 3))
 
     path = './multimedia/test.MOV'
-    calibrate_intrinsic(0, board)
+    calibrate_intrinsic(path, board)
