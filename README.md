@@ -23,5 +23,11 @@ top camera (at least).
 
 ![Image text](multimedia/calibresult.png)
 
+=======
+![Image text](https://raw.githubusercontent.com/caraido/charuco/master/multimedia/charuco.png)
+
+### an example of video tracking the corners would be like:
+
+![Image text](https://raw.githubusercontent.com/caraido/charuco/master/multimedia/demo-marker.gif)
 
 
