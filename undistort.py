@@ -12,7 +12,7 @@ def undistort_images(config, images_path):
     mtx = np.array(intrinsics['camera_mat'])
     dist = np.array(intrinsics['dist_coeff'])
     resolution = tuple([intrinsics['height'], intrinsics['width']])
-    newcameramtx, _ = cv2.getOptimalNewCameraMatrix(mtx, dist, resolution, 2, resolution)
+    newcameramtx, _ = cv2.getOptimalNewCameraMatrix(mtx, dist, resolution, 0, resolution)
 
     images = []
     for file in os.listdir(images_path):
