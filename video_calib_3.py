@@ -11,6 +11,12 @@ from tqdm import trange
 from time import time
 
 
+def create_board(grid_nbr=9, default_Dict=cv2.aruco.DICT_4X4_50):
+    dictionary = cv2.aruco.getPredefinedDictionary(default_Dict)  # default
+    board = cv2.aruco.CharucoBoard_create(grid_nbr, grid_nbr, .025, .0125, dictionary)
+    return board
+
+
 def get_video_params(vid):
     cap = cv2.VideoCapture(vid)
 
@@ -33,7 +39,7 @@ def get_corners_aruco_live(vid, board, skip=20):
 
     cap = cv2.VideoCapture(vid)
     if not cap.isOpened():
-        print('open camera failed')
+        raise Exception('open camera failed! Check camera ID')
     else:
         print('open camera succeeded')
 
@@ -206,8 +212,63 @@ def calibrate_charuco(allCorners, allIds, board, video_params):
     return out
 
 
+def quick_calibrate_charuco(allCorners, allIds, board, width,height):
+    print("\ncalibrating...")
+    tstart = time()
+
+    cameraMat = np.eye(3)
+    distCoeffs = np.zeros(14)
+    dim = (width, height)
+    calib_flags = cv2.CALIB_ZERO_TANGENT_DIST + cv2.CALIB_FIX_K3 + \
+                  cv2.CALIB_FIX_PRINCIPAL_POINT
+    calib_flags2 = cv2.fisheye.CALIB_RECOMPUTE_EXTRINSIC + cv2.fisheye.CALIB_CHECK_COND +cv2.fisheye.CALIB_FIX_SKEW
+    # all model included with 14 coeffifcent. about the flag please check:
+    # https://docs.opencv.org/3.4/d9/d0c/group__calib3d.html
+    calib_flags3 = cv2.CALIB_RATIONAL_MODEL + cv2.CALIB_THIN_PRISM_MODEL + cv2.CALIB_TILTED_MODEL
+
+    error, cameraMat, distCoeffs, rvecs, tvecs = cv2.aruco.calibrateCameraCharuco(
+        allCorners, allIds, board,
+        dim, cameraMat, distCoeffs,
+        flags=calib_flags3)
+
+    tend = time()
+    tdiff = tend - tstart
+    print("\ncalibration took {} minutes and {:.1f} seconds".format(
+        int(tdiff / 60), tdiff - int(tdiff / 60) * 60))
+
+    out = dict()
+    out['error'] = error
+    out['camera_mat'] = cameraMat.tolist()
+    out['dist_coeff'] = distCoeffs.tolist()
+    out['width'] = width
+    out['height'] = height
+
+    return out
+
+
+def quick_calibrate(someCorners, someIds, board, width, height):
+    allCorners = []
+    allIds = []
+
+    allCorners.extend(someCorners)
+    allIds.extend(someIds)
+
+    allCorners, allIds = trim_corners(allCorners, allIds, maxBoards=100)
+    allCornersConcat, allIdsConcat, markerCounter = reformat_corners(allCorners, allIds)
+
+    expected_markers = get_expected_corners(board)
+
+    print("\nfound {} markers, {} boards, {} complete boards".format(
+        len(allCornersConcat), len(markerCounter),
+        np.sum(markerCounter == expected_markers)))
+
+    calib_params = quick_calibrate_charuco(allCorners, allIds, board, width, height)
+    return calib_params
+
+
 def calibrate_camera_aruco(vid, board):
-    if vid == 0:
+    if 1:
+        #if type(vid) is int or float:
         video_params, someCorners, someIds = get_corners_aruco_live(vid, board)
     else:
         video_params = get_video_params(vid)
@@ -250,5 +311,9 @@ if __name__ == '__main__':
     board = cv2.aruco.CharucoBoard_create(grid_num, grid_num, .025, .0125, dictionary)
     #img = board.draw((200 * 3, 200 * 3))
 
-    path = './multimedia/test.MOV'
-    calibrate_intrinsic(path, board)
+    video_path = './multimedia/test.MOV'
+    camera_path = '0000000C'
+
+
+
+    calibrate_intrinsic(17391304, board)
