@@ -15,13 +15,14 @@ top camera (at least).
 1.  find out corners from the video/pictures/real-time recording
 2.  calculate camera matrix
 3.  calculate distortion coefficients
-4.  undistort the testing picture
+4.  save the camera matrix+coefficient+fps+resolution into .toml
+5.  undistort the testing picture
 
-![Image text](multimedia/test.jpeg)
+![Image text](multimedia/test_1.jpeg)
 
-### result (failed, need more investigation)
+### result (succeeded. Able to see the black residual on the right + bottom)
 
-![Image text](multimedia/calibresult.png)
+![Image text](multimedia/undistorted/test_1.jpeg)
 
 =======
 ![Image text](https://raw.githubusercontent.com/caraido/charuco/master/multimedia/charuco.png)

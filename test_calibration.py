@@ -11,6 +11,7 @@ system = PySpin.System.GetInstance()
 
 cam_list = system.GetCameras() # iterable of all the spinnaker cameras
 cam = cam_list.GetByIndex(0)
+
 # get node map
 nodemap_tldevice = cam.GetTLDeviceNodeMap()
 device_serial_number = PySpin.CStringPtr(nodemap_tldevice.GetNode('DeviceSerialNumber')).GetValue()
