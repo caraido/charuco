@@ -4,7 +4,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 import matplotlib as mpl
 import ffmpeg
-import video_calib_3 as vc
+import calibration_utils as cau
 import os
 import toml
 
@@ -58,7 +58,7 @@ class Calib:
         self.allIds = []
         self.decimator = 0
         self.board = CharucoBoard().board
-        self.max_size = vc.get_expected_corners(self.board)
+        self.max_size = cau.get_expected_corners(self.board)
         self.save_path = './config/config_intrinsic_'
 
     def reset(self):
@@ -74,7 +74,7 @@ class Calib:
         if os.path.exists(save_path):
             print('\n config file already exists.')
         else:
-            param = vc.quick_calibrate(self.allCorners,
+            param = cau.quick_calibrate(self.allCorners,
                                        self.allIds,
                                        self.board,
                                        width,
@@ -168,7 +168,7 @@ class Camera:
         self.file.stdin.write(frame.tobytes())
 
     def get_camera_property(self):
-        nodemap_tldevice = self._spincam.GetTLDEviceNodeMap()
+        nodemap_tldevice = self._spincam.GetTLDeviceNodeMap()
         device_serial_number = PySpin.CStringPtr(nodemap_tldevice.GetNode('DeviceSerialNumber')).GetValue()
         nodemap = self._spincam.GetNodeMap()
         height = PySpin.CIntegerPtr(nodemap.GetNode('Height')).GetValue()
